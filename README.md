@@ -16,6 +16,8 @@ El workflow construye y prueba los microservicios, valida Helm, crea un clúster
 
 El workflow `P7 CI/CD · Kind efímero` se ejecuta automáticamente ante cambios en `P5/apps`, `P7` o su propio archivo sobre `main`. También puede iniciarse manualmente desde la pestaña **Actions** mediante **Run workflow**.
 
+Ejecución verificada: [Run 35400491476](https://github.com/Carbonell-Castillo/Practicas-SA-B-202203069-P7/actions/runs/35400491476) — build, pruebas, ocho imágenes Docker, despliegue Kind, Helm y smoke test exitosos.
+
 La implementación, arquitectura y criterios de éxito se encuentran en [P7/README.md](P7/README.md) y [P7/DOCUMENTACION.md](P7/DOCUMENTACION.md).
 
 ## Estructura
@@ -27,4 +29,3 @@ P7/charts/                       # chart umbrella y subcharts
 P7/scripts/                      # build, tests, Helm y despliegue
 P7/evidence/                     # evidencia histórica
 ```
-

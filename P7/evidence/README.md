@@ -4,11 +4,11 @@ Completar después del primer pipeline real; no se incluyen capturas simuladas.
 
 | Evidencia | Valor real |
 | --- | --- |
-| URL de GitHub Actions | Pendiente |
-| Commit/tag evaluado | Pendiente |
-| Fecha | Pendiente |
+| URL de GitHub Actions | https://github.com/Carbonell-Castillo/Practicas-SA-B-202203069-P7/actions/runs/35400491476 |
+| Commit/tag evaluado | `ee89e8797b7548e85d5c77c82da69d664a39b173` |
+| Fecha | 18/09/2026 |
 
-Capturas requeridas:
+Evidencia disponible en el run:
 
 1. Grafo completo de `P7 CI/CD · Kind efímero` en verde.
 2. Matriz `3 · Docker` con sus ocho servicios exitosos.
