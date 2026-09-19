@@ -4,9 +4,10 @@ Completar después del primer pipeline real; no se incluyen capturas simuladas.
 
 | Evidencia | Valor real |
 | --- | --- |
-| URL de GitHub Actions | https://github.com/Carbonell-Castillo/Practicas-SA-B-202203069-P7/actions/runs/35400491476 |
-| Commit/tag evaluado | `ee89e8797b7548e85d5c77c82da69d664a39b173` |
-| Fecha | 18/09/2026 |
+| URL de GitHub Actions | https://github.com/Carbonell-Castillo/Practicas-SA-B-202203069-P7/actions/runs/35408246400 |
+| Commit/tag evaluado | `e55c9f466dc1d75b319772bab9baaafde558b564` |
+| Fecha | 19/09/2026 |
+| Imágenes publicadas | [Listado y verificación GHCR](ghcr-images.md) |
 
 Evidencia disponible en el run:
 
