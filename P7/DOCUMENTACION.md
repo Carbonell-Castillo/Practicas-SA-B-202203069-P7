@@ -55,7 +55,7 @@ P5 contiene otros specs boilerplate sin mocks para Prisma, ConfigService o HttpS
 
 ### 3. Docker
 
-Una matriz independiente construye los ocho Dockerfiles con Buildx. En eventos `push`, tags y ejecuciones manuales publica cada imagen como `ghcr.io/carbonell-castillo/p7-<servicio>:<SHA>`; en Pull Requests solo construye y valida, sin publicar. La autenticación utiliza el `GITHUB_TOKEN` efímero con permiso `packages: write` y cada imagen queda enlazada al repositorio mediante etiquetas OCI. La caché de GitHub Actions está separada por servicio. En el job de CD, cada imagen host se elimina inmediatamente después de cargarla al nodo Kind para no duplicar varios GB en el disco limitado del runner.
+Una matriz independiente construye los ocho Dockerfiles con Buildx. No publica en un registry porque el objetivo solicitado es únicamente validar la pipeline y desplegar localmente en Kind. La caché de GitHub Actions está separada por servicio. En el job de CD, cada imagen host se elimina inmediatamente después de cargarla al nodo Kind para no duplicar varios GB en el disco limitado del runner.
 
 ### 4. CD en Kind
 
@@ -93,11 +93,25 @@ La fuente de verdad evaluable es la ejecución remota de GitHub Actions, porque 
 Después del primer push, guardar en `P7/evidence`:
 
 1. captura del grafo completo en verde;
-2. detalle de la matriz Docker con ocho jobs exitosos;
-3. salida del paso `Prueba de humo del clúster` con los pods listos;
-4. URL de la ejecución y SHA evaluado en `evidence/README.md`.
+https://github.com/Carbonell-Castillo/Practicas-SA-B-202203069-P7/actions/runs/35400491476
+![alt text](image.png)
+Pruebas automaticas
+![alt text](image-1.png)
 
-No se incluyen capturas inventadas: deben provenir de Actions.
+Helm
+![alt text](image-2.png)
+2. detalle de la matriz Docker con ocho jobs exitosos;
+![alt text](image-3.png)
+3. salida del paso `Prueba de humo del clúster` con los pods listos;
+![alt text](image-4.png)
+![alt text](image-5.png)
+Cracion del kind
+![alt text](image-6.png)
+Pods runinng
+![alt text](image-7.png)
+GHCR
+![alt text](image-8.png)
+![alt text](image-9.png)
 
 ## Respuestas teóricas
 
@@ -113,4 +127,4 @@ No se incluyen capturas inventadas: deben provenir de Actions.
 
 **¿Kind equivale a producción?** No. Ejecuta una API Kubernetes real y es ideal para verificar manifests y despliegues en CI, pero no modela balanceadores, discos ni alta disponibilidad de un clúster administrado.
 
-**¿Por qué no se requieren secretos configurados manualmente?** GHCR se autentica con el `GITHUB_TOKEN` efímero que GitHub crea para el job. Las credenciales internas de la aplicación viven solo durante el job y se eliminan con el runner.
+**¿Por qué no se requieren secretos de GitHub?** No hay registry ni nube externos. Las credenciales internas de la aplicación viven solo durante el job y se eliminan con el runner.
