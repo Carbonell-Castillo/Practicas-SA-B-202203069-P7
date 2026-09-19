@@ -13,5 +13,7 @@ Evidencia disponible en el run:
 1. Grafo completo de `P7 CI/CD · Kind efímero` en verde.
 2. Matriz `3 · Docker` con sus ocho servicios exitosos.
 3. Log de `Prueba de humo del clúster`, mostrando los pods `Ready`.
+4. Matriz Docker con el login y push exitoso de las ocho imágenes a GHCR.
+5. Página de Packages con las ocho imágenes y el tag SHA evaluado.
 
 El clúster solo existe durante el job; por eso la evidencia se obtiene del log de Actions, no de una consola GCP.

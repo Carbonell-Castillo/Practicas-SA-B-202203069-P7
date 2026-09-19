@@ -8,7 +8,7 @@ El workflow construye y prueba los microservicios, valida Helm, crea un clúster
 
 - No utiliza GCP.
 - No requiere kubeconfig ni secretos cloud.
-- No publica imágenes en registros externos.
+- Publica ocho imágenes inmutables en GitHub Container Registry (GHCR).
 - No deja infraestructura ni costos activos.
 - El despliegue existe únicamente dentro del runner efímero.
 

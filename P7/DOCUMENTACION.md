@@ -55,7 +55,7 @@ P5 contiene otros specs boilerplate sin mocks para Prisma, ConfigService o HttpS
 
 ### 3. Docker
 
-Una matriz independiente construye los ocho Dockerfiles con Buildx. No publica en un registry porque el objetivo solicitado es únicamente validar la pipeline y desplegar localmente en Kind. La caché de GitHub Actions está separada por servicio. En el job de CD, cada imagen host se elimina inmediatamente después de cargarla al nodo Kind para no duplicar varios GB en el disco limitado del runner.
+Una matriz independiente construye los ocho Dockerfiles con Buildx. En eventos `push`, tags y ejecuciones manuales publica cada imagen como `ghcr.io/carbonell-castillo/p7-<servicio>:<SHA>`; en Pull Requests solo construye y valida, sin publicar. La autenticación utiliza el `GITHUB_TOKEN` efímero con permiso `packages: write` y cada imagen queda enlazada al repositorio mediante etiquetas OCI. La caché de GitHub Actions está separada por servicio. En el job de CD, cada imagen host se elimina inmediatamente después de cargarla al nodo Kind para no duplicar varios GB en el disco limitado del runner.
 
 ### 4. CD en Kind
 
@@ -113,4 +113,4 @@ No se incluyen capturas inventadas: deben provenir de Actions.
 
 **¿Kind equivale a producción?** No. Ejecuta una API Kubernetes real y es ideal para verificar manifests y despliegues en CI, pero no modela balanceadores, discos ni alta disponibilidad de un clúster administrado.
 
-**¿Por qué no se requieren secretos de GitHub?** No hay registry ni nube externos. Las credenciales internas de la aplicación viven solo durante el job y se eliminan con el runner.
+**¿Por qué no se requieren secretos configurados manualmente?** GHCR se autentica con el `GITHUB_TOKEN` efímero que GitHub crea para el job. Las credenciales internas de la aplicación viven solo durante el job y se eliminan con el runner.
