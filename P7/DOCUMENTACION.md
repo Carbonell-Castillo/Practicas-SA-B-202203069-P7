@@ -15,7 +15,7 @@ flowchart LR
     H --> D
     D --> K[4. Crear Kind efímero]
     K --> I[Build y kind load: 8 imágenes]
-    I --> HD[Helm upgrade --atomic]
+    I --> HD[Helm upgrade por fases]
     HD --> S[Smoke test de pods y deployments]
 ```
 
@@ -55,7 +55,7 @@ P5 contiene otros specs boilerplate sin mocks para Prisma, ConfigService o HttpS
 
 ### 3. Docker
 
-Una matriz independiente construye los ocho Dockerfiles con Buildx. No publica en un registry porque el objetivo solicitado es únicamente validar la pipeline y desplegar localmente en Kind. La caché de GitHub Actions está separada por servicio. En el job de CD, cada imagen host se elimina inmediatamente después de cargarla al nodo Kind para no duplicar varios GB en el disco limitado del runner.
+Una matriz independiente construye los ocho Dockerfiles con Buildx. En `push`, tags `v*` y ejecuciones manuales, autentica contra GHCR con el `GITHUB_TOKEN` automático y publica ocho imágenes públicas con el formato `ghcr.io/carbonell-castillo/p7-<servicio>:<SHA>`. En pull requests construye las imágenes, pero no las publica. La caché de GitHub Actions está separada por servicio. En el job de CD, cada imagen host se elimina inmediatamente después de cargarla al nodo Kind para no duplicar varios GB en el disco limitado del runner.
 
 ### 4. CD en Kind
 
@@ -71,7 +71,7 @@ P7/scripts/build-service.sh          Build por tecnología
 P7/scripts/test-service.sh           Pruebas automáticas
 P7/scripts/helm-ci.sh                Validación del chart
 P7/scripts/generate-helm-values.sh   Secretos efímeros
-P7/scripts/deploy.sh                 Helm atómico
+P7/scripts/deploy.sh                 Despliegue Helm por fases
 P7/charts/sa-platform/values-kind.yaml Perfil Kind
 P7/evidence/README.md                Lista de evidencias reales
 ```
@@ -90,28 +90,37 @@ La fuente de verdad evaluable es la ejecución remota de GitHub Actions, porque 
 
 ## Evidencia
 
-Después del primer push, guardar en `P7/evidence`:
+Ejecuciones verificadas: [pipeline completo](https://github.com/Carbonell-Castillo/Practicas-SA-B-202203069-P7/actions/runs/35400491476) y [publicación en GHCR](https://github.com/Carbonell-Castillo/Practicas-SA-B-202203069-P7/actions/runs/35408246400).
 
-1. captura del grafo completo en verde;
-https://github.com/Carbonell-Castillo/Practicas-SA-B-202203069-P7/actions/runs/35400491476
-![alt text](image.png)
-Pruebas automaticas
-![alt text](image-1.png)
+### Pipeline completo
 
-Helm
-![alt text](image-2.png)
-2. detalle de la matriz Docker con ocho jobs exitosos;
-![alt text](image-3.png)
-3. salida del paso `Prueba de humo del clúster` con los pods listos;
-![alt text](image-4.png)
-![alt text](image-5.png)
-Cracion del kind
-![alt text](image-6.png)
-Pods runinng
-![alt text](image-7.png)
-GHCR
-![alt text](image-8.png)
-![alt text](image-9.png)
+![Grafo completo del pipeline exitoso](image.png)
+
+### Pruebas automáticas
+
+![Matriz de pruebas automáticas exitosa](image-1.png)
+
+### Validación de Helm y Bash
+
+![Job de validación de Helm y Bash exitoso](image-2.png)
+
+### Construcción de imágenes Docker
+
+![Matriz Docker con ocho servicios exitosos](image-3.png)
+
+### Creación del clúster Kind
+
+![Creación exitosa del clúster Kind efímero](image-6.png)
+
+### Prueba de humo
+
+![Nueve pods en estado Running y Ready](image-5.png)
+
+### Publicación en GHCR
+
+![Autenticación exitosa en GHCR](image-8.png)
+
+![Construcción y publicación de una imagen en GHCR](image-9.png)
 
 ## Respuestas teóricas
 
@@ -123,8 +132,8 @@ GHCR
 
 **¿Por qué usar el SHA como versión?** Es inmutable y enlaza código, imagen y release. `latest` puede cambiar y no ofrece trazabilidad.
 
-**¿Qué ocurre si algo falla?** GitHub no habilita los jobs dependientes. Si el fallo ocurre durante el deploy, `--atomic` revierte Helm y la ejecución queda roja.
+**¿Qué ocurre si algo falla?** GitHub no habilita los jobs dependientes. Si el fallo ocurre durante el despliegue Kind, la ejecución queda roja y el workflow imprime pods, eventos y logs para facilitar el diagnóstico. Los recursos se conservan hasta que termina el job y luego desaparecen junto con el runner efímero.
 
 **¿Kind equivale a producción?** No. Ejecuta una API Kubernetes real y es ideal para verificar manifests y despliegues en CI, pero no modela balanceadores, discos ni alta disponibilidad de un clúster administrado.
 
-**¿Por qué no se requieren secretos de GitHub?** No hay registry ni nube externos. Las credenciales internas de la aplicación viven solo durante el job y se eliminan con el runner.
+**¿Por qué no se requieren secretos configurados manualmente?** GHCR utiliza el `GITHUB_TOKEN` temporal que GitHub Actions entrega automáticamente al workflow con permiso `packages: write`. Las credenciales internas de Postgres, RabbitMQ, JWT y AES se generan durante el job, viven en `$RUNNER_TEMP` y se eliminan con el runner.

@@ -1,6 +1,6 @@
 # Evidencia de ejecución
 
-Completar después del primer pipeline real; no se incluyen capturas simuladas.
+Las evidencias corresponden a ejecuciones reales y exitosas del pipeline. Las capturas se encuentran en [la documentación técnica](../DOCUMENTACION.md#evidencia).
 
 | Evidencia | Valor real |
 | --- | --- |
